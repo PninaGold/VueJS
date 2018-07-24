@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+       
+        function getCountry() {
+            fetch ('https://restcountries.eu/rest/v2/all?fields=name')
+                .then(function (res) 
+                    {
+                    return res.json();
+                    }
+                     )
+                .then(function (allCountries) {
+                    let Country = allCountries[Math.floor(Math.random() * 250)];
+                    fetch('https://restcountries.eu/rest/v2/name/' + Country["name"])
+                    .then(function (theRandomalCountry) {
+                        return theRandomalCountry.json();
+                    }).then(function (countryData) { console.log(countryData); });
+                })
+
+
+        }
+
+    </script>
+</head>
+
+<body>
+    <button onclick="getCountry()">GetCountry</button>
+    
+</body>
+
+</html>
