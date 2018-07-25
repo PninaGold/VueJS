@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="container">
+        <button id="display" @click="displayList()">Display List</button>
+        <button id="Add" @click="showForm=true">Add To List</button>
+        
+        <div id="AmazingForm" v-if="showForm">
+        <p>Description:<input type="text" id="txtdescription" required> </p>
+        <p>Date:<input type="date" id="txtdate" required> </p>
+        <p>Time:<input type="time" id="txttime" required></p>
+        <button id="submit" @click="addToList()">Add Now</button>
+</div>
+
+        <ul v-if="!showForm">
+            <li id="listItem" v-for="(task,index) in list">
+               Task no.{{ index+1 }}: <B> "{{ task["description"] }}" </B> set for <b>{{task["time"]}}</b> on <b>{{task["date"]}} </b>
+            </li>
+        </ul>
+
+    </div>
+
+
+    <script>
+        class Task {
+            constructor(description, date, time) {
+                this.description = description;
+                this.date = date;
+                this.time = time;
+            }
+            getTaskProps() {
+                return `date: ${this.date}, time: ${this.time}, description: ${this.description}`;
+            }
+        }
+        new Vue({
+            el: '#container',
+            data: {
+                list: [],
+                showForm: false,
+                showRemove:false
+            },
+            load: {
+                function() { console.log("start"); }
+            },
+            methods: {
+                loadList:function(){
+                    let ListStr = localStorage.getItem('TasksList');
+                    this.list = JSON.parse(ListStr);
+                },
+                unloadList:function(){
+                    localStorage.setItem('TasksList', JSON.stringify(this.list));
+                    this.list.clear;
+                },
+                displayList: function () {
+                    this.loadList();
+                    console.log('--------displayListFunction----------');
+                    this.showForm=false;
+                    this.loadList();
+                },
+                addToList: function () {
+                    console.log('---------addToListFunction---------');
+                    this.loadList();
+                    let t1 = new Task(document.getElementById("txtdescription").value.toString(),
+                        document.getElementById("txtdate").value.toString(),
+                        document.getElementById("txttime").value.toString(), );
+                        this.list=this.list?this.list:[];
+                    this.list.push(t1);
+                   this.unloadList();
+                },
+                //not used:
+                removeTask:function(index){
+                    this.list[index].clear;
+                    this.displayList();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
